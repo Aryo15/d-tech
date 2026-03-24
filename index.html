@@ -35,6 +35,7 @@
       color: var(--text-primary);
       overflow-x: hidden;
       cursor: none;
+      background: var(--bg-primary);
     }
 
     /* ── CUSTOM CURSOR ── */
@@ -71,30 +72,18 @@
       position: fixed; top: 0; left: 0; right: 0;
       z-index: 100;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 20px 60px;
+      padding: 16px 60px;
       background: rgba(6,16,30,0.85);
       backdrop-filter: blur(20px);
       border-bottom: 0.5px solid var(--border);
       transition: padding 0.3s;
     }
-    nav.scrolled { padding: 14px 60px; }
+    nav.scrolled { padding: 10px 60px; }
 
-    .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-    .logo-icon {
-      position: relative; width: 38px; height: 38px;
-      background: var(--bg-card);
-      border: 1px solid rgba(74,127,196,0.3);
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .logo-icon svg { width: 22px; height: 22px; }
-    .logo-text { display: flex; flex-direction: column; }
-    .logo-name {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800; font-size: 16px;
-      letter-spacing: 0.06em; color: var(--text-primary);
-    }
-    .logo-sub { font-size: 9px; color: var(--accent); letter-spacing: 0.18em; }
+    /* Logo image sizing — consistent and not oversized */
+    .logo { display: flex; align-items: center; text-decoration: none; }
+    .logo img { height: 42px; width: auto; display: block; transition: height 0.3s; }
+    nav.scrolled .logo img { height: 34px; }
 
     .nav-links { display: flex; align-items: center; gap: 36px; }
     .nav-links a {
@@ -130,12 +119,16 @@
       display: flex; align-items: center;
       position: relative; overflow: hidden;
       padding: 120px 60px 80px;
+      background: var(--bg-primary);
     }
+
+    /* CANVAS: only covers hero, not fixed to whole page */
     #hero-canvas {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
       pointer-events: none;
       z-index: 0;
     }
+
     .hero-grid {
       position: absolute; inset: 0;
       background-image:
@@ -233,6 +226,7 @@
       border-bottom: 0.5px solid var(--border);
       display: flex; align-items: center; gap: 48px;
       overflow: hidden;
+      background: var(--bg-primary);
     }
     .clients-label { font-size: 11px; color: var(--text-muted); letter-spacing: 0.14em; white-space: nowrap; }
     .clients-logos { display: flex; gap: 48px; animation: scroll-x 20s linear infinite; }
@@ -513,6 +507,8 @@
       padding: 60px 60px 40px;
       border-top: 0.5px solid var(--border);
       background: var(--bg-primary);
+      position: relative;
+      z-index: 1;
     }
     .footer-top {
       display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
@@ -570,8 +566,10 @@
 
     /* ── MOBILE ── */
     @media (max-width: 900px) {
-      nav { padding: 16px 24px; }
-      nav.scrolled { padding: 12px 24px; }
+      nav { padding: 14px 24px; }
+      nav.scrolled { padding: 10px 24px; }
+      .logo img { height: 36px; }
+      nav.scrolled .logo img { height: 30px; }
       .nav-links { display: none; flex-direction: column; gap: 0;
         position: absolute; top: 100%; left: 0; right: 0;
         background: rgba(6,16,30,0.98); padding: 16px 0;
@@ -607,17 +605,13 @@
 </head>
 <body>
 
-  <!-- CURSOR -->
   <div id="cursor"></div>
   <div id="cursor-ring"></div>
-
-  <!-- BACKGROUND CANVAS -->
-  <canvas id="hero-canvas"></canvas>
 
   <!-- NAV -->
   <nav id="navbar">
     <a class="logo" href="#">
-      <img src="logo.png" alt="Densnet Technology" style="height:64px; width:auto; display:block;" />
+      <img src="logo.png" alt="Densnet Technology" />
     </a>
     <div class="nav-links" id="navLinks">
       <a href="#services">Services</a>
@@ -632,8 +626,9 @@
     </div>
   </nav>
 
-  <!-- HERO -->
+  <!-- HERO — canvas is INSIDE here, position:absolute, not fixed -->
   <section id="hero">
+    <canvas id="hero-canvas"></canvas>
     <div class="hero-grid"></div>
     <div class="hero-glow"></div>
     <div class="hero-content">
@@ -659,8 +654,6 @@
       <div class="scroll-line"></div>
     </div>
   </section>
-
-
 
   <!-- SERVICES -->
   <section id="services">
@@ -747,29 +740,17 @@
     </div>
   </section>
 
-  <!-- ABOUT / WHY -->
+  <!-- ABOUT -->
   <section id="about">
     <div class="about-left reveal">
       <p class="section-label">Why Densnet</p>
       <h2 class="section-title">Where Networks Meet Intelligence</h2>
       <p class="section-sub">We bridge the gap between cutting-edge AI research and real-world business outcomes — delivering solutions that actually work at scale and deliver measurable ROI.</p>
       <div class="stats-grid">
-        <div class="stat-box reveal reveal-delay-1">
-          <div class="stat-num">50+</div>
-          <div class="stat-label">Projects delivered successfully</div>
-        </div>
-        <div class="stat-box reveal reveal-delay-2">
-          <div class="stat-num">15+</div>
-          <div class="stat-label">AI models live in production</div>
-        </div>
-        <div class="stat-box reveal reveal-delay-3">
-          <div class="stat-num">98%</div>
-          <div class="stat-label">Client satisfaction rate</div>
-        </div>
-        <div class="stat-box reveal reveal-delay-4">
-          <div class="stat-num">3×</div>
-          <div class="stat-label">Average efficiency gain</div>
-        </div>
+        <div class="stat-box reveal reveal-delay-1"><div class="stat-num">50+</div><div class="stat-label">Projects delivered successfully</div></div>
+        <div class="stat-box reveal reveal-delay-2"><div class="stat-num">15+</div><div class="stat-label">AI models live in production</div></div>
+        <div class="stat-box reveal reveal-delay-3"><div class="stat-num">98%</div><div class="stat-label">Client satisfaction rate</div></div>
+        <div class="stat-box reveal reveal-delay-4"><div class="stat-num">3×</div><div class="stat-label">Average efficiency gain</div></div>
       </div>
     </div>
     <div class="features-list reveal">
@@ -865,7 +846,6 @@
           </div>
         </div>
       </div>
-
       <div class="reveal reveal-delay-2">
         <div class="contact-form" id="contactForm">
           <div class="form-row">
@@ -926,7 +906,7 @@
     <div class="footer-top">
       <div class="footer-brand">
         <a class="logo" href="#" style="text-decoration:none;">
-          <img src="logo.png" alt="Densnet Technology" style="height:44px; width:auto; display:block;" />
+          <img src="logo.png" alt="Densnet Technology" />
         </a>
         <p>AI-powered technology services that turn complex challenges into intelligent, scalable solutions for the modern enterprise.</p>
         <div class="footer-socials">
@@ -978,7 +958,7 @@
   </footer>
 
   <script>
-    /* ── CUSTOM CURSOR ── */
+    /* CURSOR */
     const cursor = document.getElementById('cursor');
     const ring = document.getElementById('cursor-ring');
     let mx = 0, my = 0, rx = 0, ry = 0;
@@ -991,13 +971,13 @@
     }
     animateCursor();
 
-    /* ── NAVBAR SCROLL ── */
+    /* NAVBAR SCROLL */
     const navbar = document.getElementById('navbar');
     window.addEventListener('scroll', () => {
       navbar.classList.toggle('scrolled', window.scrollY > 60);
     });
 
-    /* ── HAMBURGER ── */
+    /* HAMBURGER */
     function toggleMenu() {
       document.getElementById('navLinks').classList.toggle('open');
     }
@@ -1005,33 +985,25 @@
       a.addEventListener('click', () => document.getElementById('navLinks').classList.remove('open'));
     });
 
-    /* ── SCROLL REVEAL ── */
+    /* SCROLL REVEAL */
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
     }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-    /* ── HERO CANVAS NETWORK ── */
+    /* HERO CANVAS — position:absolute inside #hero, no solid fill */
     const canvas = document.getElementById('hero-canvas');
     const ctx = canvas.getContext('2d');
     let W, H, nodes = [];
     let NUM = 55;
 
     function resize() {
-      W = canvas.width = window.innerWidth;
-      H = canvas.height = window.innerHeight;
-      // Adjust number of nodes based on screen size for better visibility
-      if (W < 768) {
-        NUM = 35; // Fewer nodes on mobile for performance
-      } else if (W < 1200) {
-        NUM = 55; // Standard for tablets/desktops
-      } else {
-        NUM = 75; // More nodes on large screens
-      }
+      const hero = document.getElementById('hero');
+      W = canvas.width = hero.offsetWidth;
+      H = canvas.height = hero.offsetHeight;
+      NUM = W < 768 ? 35 : W < 1200 ? 55 : 75;
       initNodes();
     }
-    resize();
-    window.addEventListener('resize', () => { resize(); initNodes(); });
 
     function initNodes() {
       nodes = [];
@@ -1040,34 +1012,35 @@
           x: Math.random() * W, y: Math.random() * H,
           vx: (Math.random() - 0.5) * 0.4,
           vy: (Math.random() - 0.5) * 0.4,
-          r: W < 768 ? Math.random() * 3 + 2 : Math.random() * 2 + 1 // Larger nodes on mobile
+          r: W < 768 ? Math.random() * 3 + 2 : Math.random() * 2 + 1
         });
       }
     }
-    initNodes();
 
-    let mouseX = W / 2, mouseY = H / 2;
+    resize();
+    window.addEventListener('resize', resize);
+
+    let mouseX = -9999, mouseY = -9999;
     document.addEventListener('mousemove', e => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
+      const hero = document.getElementById('hero');
+      const rect = hero.getBoundingClientRect();
+      mouseX = e.clientX - rect.left;
+      mouseY = e.clientY - rect.top;
     });
 
     function drawNetwork() {
+      /* NO fillRect — canvas is transparent, hero bg-color shows through */
       ctx.clearRect(0, 0, W, H);
-      // Fill with background color
-      ctx.fillStyle = '#06101e';
-      ctx.fillRect(0, 0, W, H);
-      
+
       nodes.forEach(n => {
         n.x += n.vx; n.y += n.vy;
         if (n.x < 0 || n.x > W) n.vx *= -1;
         if (n.y < 0 || n.y > H) n.vy *= -1;
       });
-      
-      // Adjust connection distance based on screen size
+
       const maxDist = W < 768 ? 100 : 130;
-      const mouseDist = W < 768 ? 120 : 160;
-      
+      const mDist   = W < 768 ? 120 : 160;
+
       for (let i = 0; i < nodes.length; i++) {
         for (let j = i + 1; j < nodes.length; j++) {
           const a = nodes[i], b = nodes[j];
@@ -1075,18 +1048,18 @@
           if (d < maxDist) {
             ctx.beginPath();
             ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
-            ctx.strokeStyle = `rgba(74,144,226,${(W < 768 ? 0.2 : 0.12) * (1 - d/maxDist)})`;
-            ctx.lineWidth = W < 768 ? 1.2 : 0.8; // Thicker lines on mobile
+            ctx.strokeStyle = `rgba(74,144,226,${(W < 768 ? 0.2 : 0.12) * (1 - d / maxDist)})`;
+            ctx.lineWidth = W < 768 ? 1.2 : 0.8;
             ctx.stroke();
           }
         }
         const n = nodes[i];
         const dm = Math.hypot(n.x - mouseX, n.y - mouseY);
-        if (dm < mouseDist) {
+        if (dm < mDist) {
           ctx.beginPath();
           ctx.moveTo(n.x, n.y); ctx.lineTo(mouseX, mouseY);
-          ctx.strokeStyle = `rgba(74,144,226,${(W < 768 ? 0.4 : 0.25) * (1 - dm/mouseDist)})`;
-          ctx.lineWidth = W < 768 ? 1.5 : 1; // Thicker mouse lines on mobile
+          ctx.strokeStyle = `rgba(74,144,226,${(W < 768 ? 0.4 : 0.25) * (1 - dm / mDist)})`;
+          ctx.lineWidth = W < 768 ? 1.5 : 1;
           ctx.stroke();
         }
         ctx.beginPath();
@@ -1098,72 +1071,58 @@
     }
     drawNetwork();
 
-    /* ── FORM SUBMIT ── */
-async function submitForm() {
-  const fname = document.getElementById('fname').value.trim();
-  const email = document.getElementById('email').value.trim();
-  const message = document.getElementById('message').value.trim();
+    /* FORM SUBMIT */
+    async function submitForm() {
+      const fname   = document.getElementById('fname').value.trim();
+      const email   = document.getElementById('email').value.trim();
+      const message = document.getElementById('message').value.trim();
 
-  if (!fname || !email || !message) {
-    alert('Please fill in your name, email, and message.');
-    return;
-  }
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    alert('Please enter a valid email address.');
-    return;
-  }
+      if (!fname || !email || !message) { alert('Please fill in your name, email, and message.'); return; }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { alert('Please enter a valid email address.'); return; }
 
-  const submitBtn = document.querySelector('.form-submit');
-  const originalText = submitBtn.textContent;
-  submitBtn.textContent = 'Sending...';
-  submitBtn.disabled = true;
+      const submitBtn = document.querySelector('.form-submit');
+      const originalText = submitBtn.textContent;
+      submitBtn.textContent = 'Sending...';
+      submitBtn.disabled = true;
 
-  try {
-    // Send as JSON, not FormData
-    const payload = {
-      fname: document.getElementById('fname').value.trim(),
-      lname: document.getElementById('lname').value.trim(),
-      email: document.getElementById('email').value.trim(),
-      company: document.getElementById('company').value.trim(),
-      service: document.getElementById('service').value,
-      message: document.getElementById('message').value.trim()
-    };
+      try {
+        const payload = {
+          fname:   document.getElementById('fname').value.trim(),
+          lname:   document.getElementById('lname').value.trim(),
+          email:   document.getElementById('email').value.trim(),
+          company: document.getElementById('company').value.trim(),
+          service: document.getElementById('service').value,
+          message: document.getElementById('message').value.trim()
+        };
 
-    await fetch('https://script.google.com/macros/s/AKfycbzaCW_cRuIgS2ZDAk-xFcdVQMkYSWvCtAUE4KahVHeuc_LtfFCWboW2U6ocCu3Cdub4/exec', {
-      method: 'POST',
-      // no-cors: required for Apps Script — means we can't read the response,
-      // but the request goes through correctly
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
+        await fetch('https://script.google.com/macros/s/AKfycbzaCW_cRuIgS2ZDAk-xFcdVQMkYSWvCtAUE4KahVHeuc_LtfFCWboW2U6ocCu3Cdub4/exec', {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
 
-    // With no-cors we can't confirm success from the response,
-    // so just show success after the request completes without throwing
-    document.getElementById('form-success').style.display = 'block';
-    submitBtn.style.display = 'none';
-    ['fname','lname','email','company','service','message'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.value = '';
-    });
-  } catch (error) {
-    console.error('Form submission error:', error);
-    alert('Network error. Please try again or email us directly.');
-    submitBtn.textContent = originalText;
-    submitBtn.disabled = false;
-  }
-}
+        document.getElementById('form-success').style.display = 'block';
+        submitBtn.style.display = 'none';
+        ['fname','lname','email','company','service','message'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.value = '';
+        });
+      } catch (error) {
+        console.error('Form submission error:', error);
+        alert('Network error. Please try again or email us directly.');
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+      }
+    }
 
-    /* ── SMOOTH ACTIVE NAV ── */
-    const sections = document.querySelectorAll('section[id], #hero');
+    /* ACTIVE NAV */
+    const sections = document.querySelectorAll('section[id]');
     window.addEventListener('scroll', () => {
       let current = '';
-      sections.forEach(s => {
-        if (window.scrollY >= s.offsetTop - 120) current = s.id;
-      });
+      sections.forEach(s => { if (window.scrollY >= s.offsetTop - 120) current = s.id; });
       document.querySelectorAll('.nav-links a').forEach(a => {
-        a.style.color = a.getAttribute('href') === '#' + current
-          ? 'var(--accent)' : '';
+        a.style.color = a.getAttribute('href') === '#' + current ? 'var(--accent)' : '';
       });
     });
   </script>
