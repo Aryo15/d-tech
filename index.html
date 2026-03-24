@@ -32,7 +32,6 @@
 
     body {
       font-family: 'DM Sans', sans-serif;
-      background: var(--bg-primary);
       color: var(--text-primary);
       overflow-x: hidden;
       cursor: none;
@@ -133,8 +132,9 @@
       padding: 120px 60px 80px;
     }
     #hero-canvas {
-      position: absolute; inset: 0;
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       pointer-events: none;
+      z-index: 0;
     }
     .hero-grid {
       position: absolute; inset: 0;
@@ -147,8 +147,8 @@
     .hero-glow {
       position: absolute; right: -200px; top: 50%;
       transform: translateY(-50%);
-      width: 500px; height: 500px;
-      background: radial-gradient(circle, rgba(26,90,200,0.08) 0%, transparent 70%);
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(26,90,200,0.14) 0%, transparent 65%);
       pointer-events: none;
     }
     .hero-content { position: relative; z-index: 2; max-width: 680px; }
@@ -265,7 +265,7 @@
     }
 
     /* ── SERVICES ── */
-    #services { background: var(--bg-primary); }
+    #services { background: rgba(6,16,30,0.85); }
     .services-header { margin-bottom: 56px; }
     .services-grid {
       display: grid;
@@ -317,7 +317,7 @@
 
     /* ── PROCESS ── */
     #process {
-      background: var(--bg-secondary);
+      background: rgba(10,25,41,0.85);
       border-top: 0.5px solid var(--border);
       border-bottom: 0.5px solid var(--border);
     }
@@ -351,6 +351,7 @@
     #about {
       display: grid; grid-template-columns: 1fr 1fr;
       gap: 80px; align-items: center;
+      background: rgba(10,25,41,0.85);
     }
     .about-left .section-title { margin-bottom: 20px; }
     .about-left .section-sub { margin-bottom: 40px; }
@@ -392,7 +393,7 @@
     .feature-text .fd { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
 
     /* ── TECHNOLOGIES ── */
-    #technologies { background: var(--bg-primary); text-align: center; }
+    #technologies { background: rgba(6,16,30,0.85); text-align: center; }
     .tech-header { margin-bottom: 56px; }
     .tech-header .section-sub { margin: 0 auto; }
     .tech-grid {
@@ -412,7 +413,7 @@
 
     /* ── CONTACT ── */
     #contact {
-      background: var(--bg-secondary);
+      background: rgba(10,25,41,0.85);
       border-top: 0.5px solid var(--border);
     }
     .contact-wrapper {
@@ -483,7 +484,7 @@
     /* ── CTA BANNER ── */
     .cta-banner {
       margin: 0 60px;
-      background: var(--bg-card);
+      background: rgba(13,31,56,0.85);
       border: 0.5px solid rgba(74,127,196,0.3);
       border-radius: 20px; padding: 72px 60px;
       text-align: center; position: relative; overflow: hidden;
@@ -568,14 +569,6 @@
 
     /* ── MOBILE ── */
     @media (max-width: 900px) {
-
-        #hero-canvas {
-    opacity: 0.8;
-  }
-
-  .hero-grid {
-    opacity: 0.4;
-  }
       nav { padding: 16px 24px; }
       nav.scrolled { padding: 12px 24px; }
       .nav-links { display: none; flex-direction: column; gap: 0;
@@ -617,6 +610,9 @@
   <div id="cursor"></div>
   <div id="cursor-ring"></div>
 
+  <!-- BACKGROUND CANVAS -->
+  <canvas id="hero-canvas"></canvas>
+
   <!-- NAV -->
   <nav id="navbar">
     <a class="logo" href="#">
@@ -637,7 +633,6 @@
 
   <!-- HERO -->
   <section id="hero">
-    <canvas id="hero-canvas"></canvas>
     <div class="hero-grid"></div>
     <div class="hero-glow"></div>
     <div class="hero-content">
@@ -664,18 +659,7 @@
     </div>
   </section>
 
-  <!-- CLIENTS STRIP -->
-  <div class="clients">
-    <span class="clients-label">TRUSTED BY</span>
-    <div style="overflow:hidden; flex:1;">
-      <div class="clients-logos">
-        <span class="client-name">EKAAYAM.COM</span>
 
-        <!-- duplicate for infinite loop -->
-
-      </div>
-    </div>
-  </div>
 
   <!-- SERVICES -->
   <section id="services">
@@ -1030,30 +1014,23 @@
     const canvas = document.getElementById('hero-canvas');
     const ctx = canvas.getContext('2d');
     let W, H, nodes = [];
-    let NUM;
-
-    function setNodeCount() {
-      if (window.innerWidth < 600) NUM = 25;
-      else if (window.innerWidth < 900) NUM = 40;
-      else NUM = 65;
-    }
+    let NUM = 55;
 
     function resize() {
-      const dpr = window.devicePixelRatio || 1;
-      W = canvas.width = canvas.offsetWidth * dpr;
-      H = canvas.height = canvas.offsetHeight * dpr;
-      canvas.style.width = canvas.offsetWidth + 'px';
-      canvas.style.height = canvas.offsetHeight + 'px';
-      ctx.scale(dpr, dpr);
+      W = canvas.width = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+      // Adjust number of nodes based on screen size for better visibility
+      if (W < 768) {
+        NUM = 35; // Fewer nodes on mobile for performance
+      } else if (W < 1200) {
+        NUM = 55; // Standard for tablets/desktops
+      } else {
+        NUM = 75; // More nodes on large screens
+      }
+      initNodes();
     }
-      setNodeCount();
-      resize();
-      
-      window.addEventListener('resize', () => {
-        setNodeCount();
-        resize();
-        initNodes();
-      });
+    resize();
+    window.addEventListener('resize', () => { resize(); initNodes(); });
 
     function initNodes() {
       nodes = [];
@@ -1062,50 +1039,58 @@
           x: Math.random() * W, y: Math.random() * H,
           vx: (Math.random() - 0.5) * 0.4,
           vy: (Math.random() - 0.5) * 0.4,
-          r: Math.random() * 2 + 1
+          r: W < 768 ? Math.random() * 3 + 2 : Math.random() * 2 + 1 // Larger nodes on mobile
         });
       }
     }
     initNodes();
 
     let mouseX = W / 2, mouseY = H / 2;
-    canvas.addEventListener('mousemove', e => {
-      const rect = canvas.getBoundingClientRect();
-      mouseX = e.clientX - rect.left;
-      mouseY = e.clientY - rect.top;
+    document.addEventListener('mousemove', e => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
     });
 
     function drawNetwork() {
       ctx.clearRect(0, 0, W, H);
+      // Fill with background color
+      ctx.fillStyle = '#06101e';
+      ctx.fillRect(0, 0, W, H);
+      
       nodes.forEach(n => {
         n.x += n.vx; n.y += n.vy;
         if (n.x < 0 || n.x > W) n.vx *= -1;
         if (n.y < 0 || n.y > H) n.vy *= -1;
       });
+      
+      // Adjust connection distance based on screen size
+      const maxDist = W < 768 ? 100 : 130;
+      const mouseDist = W < 768 ? 120 : 160;
+      
       for (let i = 0; i < nodes.length; i++) {
         for (let j = i + 1; j < nodes.length; j++) {
           const a = nodes[i], b = nodes[j];
           const d = Math.hypot(a.x - b.x, a.y - b.y);
-          if (d < (window.innerWidth < 600 ? 90 : 140)) {
+          if (d < maxDist) {
             ctx.beginPath();
             ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
-            ctx.strokeStyle = `rgba(74,144,226,${0.25 * (1 - d/130)})`;
-            ctx.lineWidth = 0.8;
+            ctx.strokeStyle = `rgba(74,144,226,${(W < 768 ? 0.2 : 0.12) * (1 - d/maxDist)})`;
+            ctx.lineWidth = W < 768 ? 1.2 : 0.8; // Thicker lines on mobile
             ctx.stroke();
           }
         }
         const n = nodes[i];
         const dm = Math.hypot(n.x - mouseX, n.y - mouseY);
-        if (dm < 160) {
+        if (dm < mouseDist) {
           ctx.beginPath();
           ctx.moveTo(n.x, n.y); ctx.lineTo(mouseX, mouseY);
-          ctx.strokeStyle = `rgba(74,144,226,${0.25 * (1 - dm/160)})`;
-          ctx.lineWidth = 1;
+          ctx.strokeStyle = `rgba(74,144,226,${(W < 768 ? 0.4 : 0.25) * (1 - dm/mouseDist)})`;
+          ctx.lineWidth = W < 768 ? 1.5 : 1; // Thicker mouse lines on mobile
           ctx.stroke();
         }
         ctx.beginPath();
         ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(74,144,226,0.7)`;
+        ctx.fillStyle = `rgba(74,144,226,${0.35 + Math.random() * 0.1})`;
         ctx.fill();
       }
       requestAnimationFrame(drawNetwork);
