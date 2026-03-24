@@ -147,8 +147,8 @@
     .hero-glow {
       position: absolute; right: -200px; top: 50%;
       transform: translateY(-50%);
-      width: 700px; height: 700px;
-      background: radial-gradient(circle, rgba(26,90,200,0.14) 0%, transparent 65%);
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(26,90,200,0.08) 0%, transparent 70%);
       pointer-events: none;
     }
     .hero-content { position: relative; z-index: 2; max-width: 680px; }
@@ -568,6 +568,14 @@
 
     /* ── MOBILE ── */
     @media (max-width: 900px) {
+
+        #hero-canvas {
+    opacity: 0.8;
+  }
+
+  .hero-grid {
+    opacity: 0.4;
+  }
       nav { padding: 16px 24px; }
       nav.scrolled { padding: 12px 24px; }
       .nav-links { display: none; flex-direction: column; gap: 0;
@@ -1035,14 +1043,30 @@
     const canvas = document.getElementById('hero-canvas');
     const ctx = canvas.getContext('2d');
     let W, H, nodes = [];
-    const NUM = 55;
+    let NUM;
+
+    function setNodeCount() {
+      if (window.innerWidth < 600) NUM = 25;
+      else if (window.innerWidth < 900) NUM = 40;
+      else NUM = 65;
+    }
 
     function resize() {
-      W = canvas.width = canvas.offsetWidth;
-      H = canvas.height = canvas.offsetHeight;
+      const dpr = window.devicePixelRatio || 1;
+      W = canvas.width = canvas.offsetWidth * dpr;
+      H = canvas.height = canvas.offsetHeight * dpr;
+      canvas.style.width = canvas.offsetWidth + 'px';
+      canvas.style.height = canvas.offsetHeight + 'px';
+      ctx.scale(dpr, dpr);
     }
-    resize();
-    window.addEventListener('resize', () => { resize(); initNodes(); });
+      setNodeCount();
+      resize();
+      
+      window.addEventListener('resize', () => {
+        setNodeCount();
+        resize();
+        initNodes();
+      });
 
     function initNodes() {
       nodes = [];
@@ -1075,10 +1099,10 @@
         for (let j = i + 1; j < nodes.length; j++) {
           const a = nodes[i], b = nodes[j];
           const d = Math.hypot(a.x - b.x, a.y - b.y);
-          if (d < 130) {
+          if (d < (window.innerWidth < 600 ? 90 : 140)) {
             ctx.beginPath();
             ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
-            ctx.strokeStyle = `rgba(74,144,226,${0.12 * (1 - d/130)})`;
+            ctx.strokeStyle = `rgba(74,144,226,${0.25 * (1 - d/130)})`;
             ctx.lineWidth = 0.8;
             ctx.stroke();
           }
@@ -1094,7 +1118,7 @@
         }
         ctx.beginPath();
         ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(74,144,226,${0.35 + Math.random() * 0.1})`;
+        ctx.fillStyle = `rgba(74,144,226,0.7)`;
         ctx.fill();
       }
       requestAnimationFrame(drawNetwork);
