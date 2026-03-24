@@ -1098,56 +1098,60 @@
     drawNetwork();
 
     /* ── FORM SUBMIT ── */
-    async function submitForm() {
-      const fname = document.getElementById('fname').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const message = document.getElementById('message').value.trim();
-      if (!fname || !email || !message) {
-        alert('Please fill in your name, email, and message.');
-        return;
-      }
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        alert('Please enter a valid email address.');
-        return;
-      }
+async function submitForm() {
+  const fname = document.getElementById('fname').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const message = document.getElementById('message').value.trim();
 
-      // Show loading state
-      const submitBtn = document.querySelector('.form-submit');
-      const originalText = submitBtn.textContent;
-      submitBtn.textContent = 'Sending...';
-      submitBtn.disabled = true;
+  if (!fname || !email || !message) {
+    alert('Please fill in your name, email, and message.');
+    return;
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    alert('Please enter a valid email address.');
+    return;
+  }
 
-      try {
-        // Collect form data
-        const formData = new FormData();
-        formData.append('fname', document.getElementById('fname').value.trim());
-        formData.append('lname', document.getElementById('lname').value.trim());
-        formData.append('email', document.getElementById('email').value.trim());
-        formData.append('company', document.getElementById('company').value.trim());
-        formData.append('service', document.getElementById('service').value);
-        formData.append('message', document.getElementById('message').value.trim());
+  const submitBtn = document.querySelector('.form-submit');
+  const originalText = submitBtn.textContent;
+  submitBtn.textContent = 'Sending...';
+  submitBtn.disabled = true;
 
-        // Send to Google Sheets via Google Apps Script
-        const response = await fetch('https://script.google.com/macros/s/AKfycbzaCW_cRuIgS2ZDAk-xFcdVQMkYSWvCtAUE4KahVHeuc_LtfFCWboW2U6ocCu3Cdub4/exec', {
-          method: 'POST',
-          body: formData
-        });
+  try {
+    // Send as JSON, not FormData
+    const payload = {
+      fname: document.getElementById('fname').value.trim(),
+      lname: document.getElementById('lname').value.trim(),
+      email: document.getElementById('email').value.trim(),
+      company: document.getElementById('company').value.trim(),
+      service: document.getElementById('service').value,
+      message: document.getElementById('message').value.trim()
+    };
 
-        // Success - form was submitted
-        document.getElementById('form-success').style.display = 'block';
-        submitBtn.style.display = 'none';
-        ['fname','lname','email','company','service','message'].forEach(id => {
-          const el = document.getElementById(id);
-          if (el) el.value = '';
-        });
-      } catch (error) {
-        // Network error
-        console.error('Form submission error:', error);
-        alert('Network error. Please try again or email us directly at contact@denenettech.com');
-        submitBtn.textContent = originalText;
-        submitBtn.disabled = false;
-      }
-    }
+    await fetch('https://script.google.com/macros/s/AKfycbzaCW_cRuIgS2ZDAk-xFcdVQMkYSWvCtAUE4KahVHeuc_LtfFCWboW2U6ocCu3Cdub4/exec', {
+      method: 'POST',
+      // no-cors: required for Apps Script — means we can't read the response,
+      // but the request goes through correctly
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    // With no-cors we can't confirm success from the response,
+    // so just show success after the request completes without throwing
+    document.getElementById('form-success').style.display = 'block';
+    submitBtn.style.display = 'none';
+    ['fname','lname','email','company','service','message'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+  } catch (error) {
+    console.error('Form submission error:', error);
+    alert('Network error. Please try again or email us directly.');
+    submitBtn.textContent = originalText;
+    submitBtn.disabled = false;
+  }
+}
 
     /* ── SMOOTH ACTIVE NAV ── */
     const sections = document.querySelectorAll('section[id], #hero');
