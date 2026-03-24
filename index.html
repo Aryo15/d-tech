@@ -82,7 +82,7 @@
 
     /* Logo image sizing — consistent and not oversized */
     .logo { display: flex; align-items: center; text-decoration: none; }
-    .logo img { height: 42px; width: auto; display: block; transition: height 0.3s; }
+    .logo img { height: 42px; width: 42px; display: block; transition: height 0.3s; }
     nav.scrolled .logo img { height: 34px; }
 
     .nav-links { display: flex; align-items: center; gap: 36px; }
@@ -609,22 +609,22 @@
   <div id="cursor-ring"></div>
 
   <!-- NAV -->
-  <nav id="navbar">
-    <a class="logo" href="#">
-      <img src="logo.png" alt="Densnet Technology" />
-    </a>
-    <div class="nav-links" id="navLinks">
-      <a href="#services">Services</a>
-      <a href="#about">About</a>
-      <a href="#process">Process</a>
-      <a href="#technologies">Tech Stack</a>
-      <a href="#contact">Contact</a>
-      <button class="nav-cta" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Get a Quote</button>
-    </div>
-    <div class="hamburger" id="hamburger" onclick="toggleMenu()">
-      <span></span><span></span><span></span>
-    </div>
-  </nav>
+    <nav id="navbar">
+      <a class="logo" href="#">
+        <img src="logo.png" alt="Densnet Technology" />
+      </a>
+      <div class="nav-links" id="navLinks">
+        <a href="#services">Services</a>
+        <a href="#about">About</a>
+        <a href="#process">Process</a>
+        <a href="#technologies">Tech Stack</a>
+        <a href="#contact">Contact</a>
+        <button class="nav-cta" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Get a Quote</button>
+      </div>
+      <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </div>
+    </nav>
 
   <!-- HERO — canvas is INSIDE here, position:absolute, not fixed -->
   <section id="hero">
